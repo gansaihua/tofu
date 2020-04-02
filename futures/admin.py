@@ -11,10 +11,11 @@ class ExchangeAdmin(admin.ModelAdmin):
 class CodeAdmin(admin.ModelAdmin):
     list_per_page = 25
     list_display = (
-        'id', 'name', 'symbol', 'exchange', 'margin',
+        'id', 'exchange', 'name', 'symbol', 'margin',
         'day_limit', 'delivery', 'contract_issued', 'last_traded',
     )
     list_filter = ('exchange',)
+    ordering = ('exchange', 'symbol')
 
 
 # @admin.register(models.Bar)

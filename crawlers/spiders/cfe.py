@@ -11,6 +11,16 @@ from scrapy.loader import ItemLoader
 from ..items import BarItem
 
 
+ALLOWED_PRODUCTS = {
+    'IF': '沪深300指数期货',
+    'IH': '上证50指数期货',
+    'IC': '中证500指数期货',
+    'TF': '5年期国债期货',
+    'T': '10年期国债期货',
+    'TS': '2年期国债期货',
+}
+
+
 class CFESpider(scrapy.Spider):
     name = 'cfe'
 
@@ -30,11 +40,14 @@ class CFESpider(scrapy.Spider):
     def parse(self, response):
         items = response.css('dailydata')
         for item in items:
-            # Skip option products
-            if re.match(r'^\w{1,2}?\d{4}$', item.css('instrumentid::text').get()):
+            code = item.css('productid::text').get()
+            if code in ALLOWED_PRODUCTS.keys():
                 l = ItemLoader(item=BarItem(), selector=item)
+                t = item.css('instrumentid::text').get().strip()
+                l.add_value('name', ALLOWED_PRODUCTS[code])
+                l.add_value('name', t[-4:])
+                l.add_value('symbol', t)
 
-                l.add_css('symbol', 'instrumentid::text')
                 l.add_css('datetime', 'tradingday::text')
                 l.add_css('open', 'openprice::text')
                 l.add_css('high', 'highestprice::text')

@@ -9,7 +9,7 @@ class SQLPipeline(object):
             symbol=item['exchange']
         )
 
-        code, _ = models.Code.objects.get_or_create(
+        code, _ = models.Code.objects.update_or_create(
             exchange=exchange,
             symbol=item['symbol'],
             defaults={'name': item.get('name')},
