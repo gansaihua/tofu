@@ -1,7 +1,7 @@
 """
 scrapy crawl shf
-scrapy crawl shf -a t=20200401
-scrapy crawl shf -a t=20200331 -a t2=20200402
+scrapy crawl shf -a t1=20021202
+scrapy crawl shf -a t1=20200331 -a t2=20200402
 """
 import json
 import scrapy
@@ -37,17 +37,14 @@ class SHFSpider(scrapy.Spider):
     name = 'shf'
 
     def start_requests(self):
-        t = getattr(self, 't', 'today')       # start date
-        t2 = getattr(self, 't2', None)        # end date
+        t1 = getattr(self, 't1', 'today')
+        t2 = getattr(self, 't2', 'today')
 
         url_fmt = 'http://www.shfe.com.cn/data/dailydata/kx/kx{}.dat'
-        t = pd.Timestamp(t).strftime('%Y%m%d')
-        if t2 is None:
-            yield scrapy.Request(url_fmt.format(t), callback=self.parse)
-        else:
-            for dt in pd.date_range(t, t2):
-                url = url_fmt.format(dt.strftime('%Y%m%d'))
-                yield scrapy.Request(url, callback=self.parse)
+        for dt in pd.date_range(t1, t2):
+            print(dt)
+            url = url_fmt.format(dt.strftime('%Y%m%d'))
+            yield scrapy.Request(url)
 
     def parse(self, response):
         try:

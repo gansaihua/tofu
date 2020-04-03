@@ -8,8 +8,7 @@ NEWSPIDER_MODULE = 'crawlers.spiders'
 ROBOTSTXT_OBEY = False
 
 
+LOG_LEVEL = 'WARNING'
 ITEM_PIPELINES = {
     'crawlers.pipelines.SQLPipeline': 300,
 }
-
-LOG_LEVEL = 'WARNING'
