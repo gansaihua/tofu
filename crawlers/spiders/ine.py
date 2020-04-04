@@ -1,7 +1,7 @@
 """
-scrapy crawl shf
-scrapy crawl shf -a t1=20021202
-scrapy crawl shf -a t1=20200331 -a t2=20200402
+scrapy crawl ine
+scrapy crawl ine -a t1=20180326
+scrapy crawl ine -a t1=20200331 -a t2=20200402
 """
 import json
 import scrapy
@@ -10,29 +10,16 @@ from scrapy.loader import ItemLoader
 
 from ..items import BarItem
 
-DEFAULT_MIN_DATE = pd.Timestamp('2002-12-02')
+
+DEFAULT_MIN_DATE = pd.Timestamp('2018-03-26')
 ALLOWED_PRODUCTS = {
-    'SS': '不锈钢',
-    'AU': '黄金',
-    'AL': '铝',
-    'NI': '镍',
-    'PB': '铅',
-    'CU': '铜',
-    'SN': '锡',
-    'ZN': '锌',
-    'AG': '白银',
-    'BU': '沥青',
-    'RB': '螺纹钢',
-    'FU': '燃料油',
-    'HC': '热轧卷板',
-    'WR': '线材',
-    'RU': '天然橡胶',
-    'SP': '纸浆',
+    'SC': '原油',
+    'NR': '20号胶',
 }
 
 
-class SHFSpider(scrapy.Spider):
-    name = 'shf'
+class INESpider(scrapy.Spider):
+    name = 'ine'
 
     def start_requests(self):
         t1 = getattr(self, 't1', 'today')
@@ -41,7 +28,7 @@ class SHFSpider(scrapy.Spider):
         if pd.Timestamp(t1) < DEFAULT_MIN_DATE:
             t1 = DEFAULT_MIN_DATE
 
-        url_fmt = 'http://www.shfe.com.cn/data/dailydata/kx/kx{}.dat'
+        url_fmt = 'http://www.ine.cn/data/dailydata/kx/kx{}.dat'
         for dt in pd.date_range(t1, t2):
             print(dt)
             url = url_fmt.format(dt.strftime('%Y%m%d'))

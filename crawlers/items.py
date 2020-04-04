@@ -9,7 +9,7 @@ def _convert_to_date(dt):
 
 
 def _remove_nan(value):
-    if value == 'nan':
+    if value in ('nan', ''):
         return None
     return value
 

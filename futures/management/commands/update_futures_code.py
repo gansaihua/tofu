@@ -8,6 +8,22 @@ from django.core.management.base import BaseCommand
 DEFAULT_FILE = 'futures/management/fixtures/futures_code.xlsx'
 
 
+def _sanitize_code(raw_code, dt):
+    """
+    raw_code: 'FG911', 'LR007'
+    return: 'FG1911', 'LR2007'
+    """
+    dt = min(pd.Timestamp(dt), pd.Timestamp('today'))
+
+    ref = dt.strftime('%y%m')
+    calendar = ref[0] + raw_code[2:]
+    if int(calendar) < int(ref):
+        calendar = str(int(calendar) + 1000)
+
+    symbol = raw_code[:2]
+    return symbol + calendar
+
+
 class Command(BaseCommand):
     help = """
     Import futures meta information (in excel format) to database.
@@ -30,12 +46,16 @@ class Command(BaseCommand):
         for _, row in df.iterrows():
             symbol, exchange = row['wind代码'].split('.')
 
-            exchange = models.Exchange.objects.get(symbol=exchange)
+            m = re.match(r'^(\w{1,2}?)\d{4}$', symbol)
+            if m:
+                root_symbol = m.group(1)
+            else:
+                symbol = _sanitize_code(symbol, row['最后交割日'])
+                root_symbol = re.match(r'^(\w{1,2}?)\d{4}$', symbol).group(1)
 
-            root_symbol = re.match(r'^(\w{1,2}?)\d{4}$', symbol).group(1)
             root_symbol = models.ContinuousFutures.objects.get(
                 symbol=root_symbol,
-                exchange=exchange,
+                exchange__symbol=exchange,
             )
 
             margin = row['交易保证金']

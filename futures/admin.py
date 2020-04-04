@@ -3,6 +3,14 @@ from django.utils.html import format_html
 from . import models
 
 
+@admin.register(models.Roll)
+class RollAdmin(admin.ModelAdmin):
+    list_per_page = 31
+    list_display = ('root_symbol', 'datetime', 'code', 'verion')
+    list_filter = ('verion', 'root_symbol', 'root_symbol__exchange')
+    ordering = ('-datetime',)
+
+
 @admin.register(models.Exchange)
 class ExchangeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'symbol')
@@ -11,6 +19,8 @@ class ExchangeAdmin(admin.ModelAdmin):
 @admin.register(models.ContinuousFutures)
 class ContinuousFuturesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'symbol', 'exchange')
+    list_filter = ('exchange',)
+    ordering = ('exchange', 'name')
 
 
 @admin.register(models.Code)
@@ -26,9 +36,12 @@ class CodeAdmin(admin.ModelAdmin):
 
     data.allow_tags = True
 
-    list_per_page = 25
+    def exchange(self):
+        return self.root_symbol.exchange
+
+    list_per_page = 31
     list_display = (
-        'id', 'name', 'symbol', 'margin',
+        'id', exchange, 'name', 'symbol', 'margin',
         'day_limit', 'delivery', 'contract_issued', 'last_traded',
         data,
     )
@@ -39,7 +52,7 @@ class CodeAdmin(admin.ModelAdmin):
 
 @admin.register(models.Bar)
 class BarAdmin(admin.ModelAdmin):
-    list_per_page = 25
+    list_per_page = 31
     list_display = ('code', 'datetime', 'open', 'high', 'low',
                     'close', 'volume', 'open_interest')
     date_hierarchy = 'datetime'

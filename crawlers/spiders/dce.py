@@ -10,6 +10,7 @@ from scrapy.loader import ItemLoader
 from ..items import BarItem
 
 
+DEFAULT_MIN_DATE = pd.Timestamp('2006-01-04')
 ALLOWED_PRODUCTS = {
     '豆一': 'A',
     '豆二': 'B',
@@ -40,6 +41,9 @@ class DCESpider(scrapy.Spider):
     def start_requests(self):
         t1 = getattr(self, 't1', 'today')
         t2 = getattr(self, 't2', 'today')
+
+        if pd.Timestamp(t1) < DEFAULT_MIN_DATE:
+            t1 = DEFAULT_MIN_DATE
 
         url = 'http://www.dce.com.cn/publicweb/quotesdata/dayQuotesCh.html'
         data = {'dayQuotes.variety': 'all',
@@ -79,7 +83,8 @@ class DCESpider(scrapy.Spider):
 
     def _sanitize_calendar(self, calendar):
         """
-        calendar: '2007.0', '202007.0'
-        return: '2007'
+        calendar: '2007.0', '202007.0', '0701',
+        return: '2007', 0701'
         """
-        return str(int(float(calendar)))[-4:]
+        calendar = str(int(float(calendar)))[-4:]
+        return f'{calendar:0>4}'

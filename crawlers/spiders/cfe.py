@@ -10,6 +10,7 @@ from scrapy.loader import ItemLoader
 from ..items import BarItem
 
 
+DEFAULT_MIN_DATE = pd.Timestamp('2010-04-16')
 ALLOWED_PRODUCTS = {
     'IF': '沪深300指数期货',
     'IH': '上证50指数期货',
@@ -26,6 +27,9 @@ class CFESpider(scrapy.Spider):
     def start_requests(self):
         t1 = getattr(self, 't1', 'today')
         t2 = getattr(self, 't2', 'today')
+
+        if pd.Timestamp(t1) < DEFAULT_MIN_DATE:
+            t1 = DEFAULT_MIN_DATE
 
         url_fmt = 'http://www.cffex.com.cn/sj/hqsj/rtj/{}/index.xml'
         for dt in pd.date_range(t1, t2):

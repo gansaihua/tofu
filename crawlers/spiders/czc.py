@@ -10,7 +10,7 @@ from scrapy.loader import ItemLoader
 
 from ..items import BarItem
 
-
+DEFAULT_MIN_DATE = pd.Timestamp('2005-05-09')
 ALLOWED_PRODUCTS = {
     'CF': '棉花',
     'ER': '早籼',
@@ -48,6 +48,9 @@ class CZCSpider(scrapy.Spider):
     def start_requests(self):
         t1 = getattr(self, 't1', 'today')
         t2 = getattr(self, 't2', 'today')
+
+        if pd.Timestamp(t1) < DEFAULT_MIN_DATE:
+            t1 = DEFAULT_MIN_DATE
 
         for dt in pd.date_range(t1, t2):
             print(dt)
