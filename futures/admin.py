@@ -45,7 +45,7 @@ class ContractAdmin(admin.ModelAdmin):
         'day_limit', 'delivery', 'contract_issued', 'last_traded',
         data,
     )
-    list_filter = ('root_symbol', 'root_symbol__exchange')
+    list_filter = ('root_symbol__exchange', 'root_symbol')
     search_fields = ('id', 'symbol', 'name')
     ordering = ('root_symbol__exchange', '-symbol')
 

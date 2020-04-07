@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from ._engine import DATABASES
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -69,21 +70,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tofu.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'secdb',
-        'USER': 'gansaihua',
-        'PASSWORD': '1234abcd',
-        'HOST': 'rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-        'PORT': '3306',
-    }
-}
 
 
 # Password validation
