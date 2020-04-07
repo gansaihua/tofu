@@ -6,7 +6,7 @@ from . import models
 @admin.register(models.Roll)
 class RollAdmin(admin.ModelAdmin):
     list_per_page = 31
-    list_display = ('root_symbol', 'datetime', 'code', 'verion')
+    list_display = ('root_symbol', 'datetime', 'contract', 'verion')
     list_filter = ('verion', 'root_symbol', 'root_symbol__exchange')
     ordering = ('-datetime',)
 
@@ -16,19 +16,19 @@ class ExchangeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'symbol')
 
 
-@admin.register(models.ContinuousFutures)
-class ContinuousFuturesAdmin(admin.ModelAdmin):
+@admin.register(models.RootSymbol)
+class RootSymbolAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'symbol', 'exchange')
     list_filter = ('exchange',)
-    ordering = ('exchange', 'name')
+    # ordering = ('exchange', 'name')
 
 
-@admin.register(models.Code)
-class CodeAdmin(admin.ModelAdmin):
+@admin.register(models.Contract)
+class ContractAdmin(admin.ModelAdmin):
     def data(self):
         return format_html(
             f'''
-            <a href="/admin/futures/bar/?code_id={self.id}">
+            <a href="/admin/futures/dailybar/?contract_id={self.id}">
             +
             </a>
             '''
@@ -50,10 +50,11 @@ class CodeAdmin(admin.ModelAdmin):
     ordering = ('root_symbol__exchange', '-symbol')
 
 
-@admin.register(models.Bar)
-class BarAdmin(admin.ModelAdmin):
+@admin.register(models.DailyBar)
+class DailyBarAdmin(admin.ModelAdmin):
     list_per_page = 31
-    list_display = ('code', 'datetime', 'open', 'high', 'low',
+    list_display = ('contract', 'datetime', 'open', 'high', 'low',
                     'close', 'volume', 'open_interest')
+    list_filter = ('contract__root_symbol__exchange', 'contract__root_symbol')
     date_hierarchy = 'datetime'
     ordering = ('-datetime',)

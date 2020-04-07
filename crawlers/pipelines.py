@@ -13,20 +13,20 @@ class SQLPipeline(object):
 
         _symbol = re.match(r'^(\w{1,2}?)\d{4}$', item['symbol']).group(1)
         _name = re.match(r'^(\w+)\d{4}$', item['name']).group(1)
-        root_symbol, _ = models.ContinuousFutures.objects.get_or_create(
+        root_symbol, _ = models.RootSymbol.objects.get_or_create(
             symbol=_symbol,
             exchange=exchange,
             defaults={'name': _name},
         )
 
-        code, _ = models.Code.objects.get_or_create(
+        contract, _ = models.Contract.objects.get_or_create(
             root_symbol=root_symbol,
             symbol=item['symbol'],
             defaults={'name': item['name']},
         )
 
-        models.Bar.objects.update_or_create(
-            code=code,
+        models.DailyBar.objects.update_or_create(
+            contract=contract,
             datetime=item['datetime'],
             defaults={
                 'open': item.get('open'),

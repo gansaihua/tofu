@@ -5,7 +5,15 @@ from futures import models
 from django.core.management.base import BaseCommand
 
 
-DEFAULT_FILE = 'futures/management/fixtures/futures_code.xlsx'
+_DEF_FOLDER = 'futures/management/fixtures/'
+_DEF_FILE = 'contracts.xlsx'
+_DEF_MIN_DATES = {
+    'DCE': pd.Timestamp('2006-01-04'),
+    'CFE': pd.Timestamp('2010-04-16'),
+    'INE': pd.Timestamp('2018-03-26'),
+    'SHF': pd.Timestamp('2002-12-02'),
+    'CZC': pd.Timestamp('2005-05-09'),
+}
 
 
 def _sanitize_code(raw_code, dt):
@@ -31,7 +39,7 @@ class Command(BaseCommand):
     Wind -> 数据集 -> 期货 -> 期货合约列表
 
     Usage:
-        python manage.py update_futures_code --f=../fixtures/futures_code.xlsx
+        python manage.py update_contracts --f=futures_code.xlsx
     """
 
     def add_arguments(self, parser):
@@ -40,7 +48,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write('Updating futures code')
 
-        file_name = kwargs['f'] or DEFAULT_FILE
+        file_name = _DEF_FOLDER + (kwargs['f'] or _DEF_FILE)
         df = pd.read_excel(file_name, skiprows=range(5))
 
         for _, row in df.iterrows():
@@ -53,7 +61,7 @@ class Command(BaseCommand):
                 symbol = _sanitize_code(symbol, row['最后交割日'])
                 root_symbol = re.match(r'^(\w{1,2}?)\d{4}$', symbol).group(1)
 
-            root_symbol = models.ContinuousFutures.objects.get(
+            root_symbol = models.RootSymbol.objects.get(
                 symbol=root_symbol,
                 exchange__symbol=exchange,
             )
@@ -66,10 +74,15 @@ class Command(BaseCommand):
             if np.isnan(day_limit):
                 day_limit = None
 
-            contract_issued = row['合约上市日']
+            # Skip contracts issued too much early
             last_traded = row['最后交易日']
+            if last_traded < _DEF_MIN_DATES[exchange]:
+                continue
+
             delivery = row['最后交割日']
-            code, created = models.Code.objects.update_or_create(
+            contract_issued = row['合约上市日']
+
+            code, created = models.Contract.objects.update_or_create(
                 root_symbol=root_symbol,
                 symbol=symbol,
                 defaults={

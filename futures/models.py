@@ -11,12 +11,13 @@ class Exchange(models.Model):
 
     class Meta:
         ordering = ('symbol',)
+        db_table = 'exchange'
 
     def __str__(self):
         return f'{self.symbol}'
 
 
-class ContinuousFutures(models.Model):
+class RootSymbol(models.Model):
     name = models.CharField(max_length=25, null=True, blank=True)
     symbol = models.CharField(max_length=3)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
@@ -28,11 +29,11 @@ class ContinuousFutures(models.Model):
         return f'{self.symbol}'
 
 
-class Code(models.Model):
+class Contract(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     symbol = models.CharField(max_length=10)
     root_symbol = models.ForeignKey(
-        ContinuousFutures, on_delete=models.CASCADE)
+        RootSymbol, on_delete=models.CASCADE)
     margin = models.FloatField(null=True, blank=True)
     day_limit = models.FloatField(null=True, blank=True)
     delivery = models.DateTimeField(null=True, blank=True)
@@ -47,14 +48,14 @@ class Code(models.Model):
 
 class Roll(models.Model):
     root_symbol = models.ForeignKey(
-        ContinuousFutures, on_delete=models.CASCADE)
+        RootSymbol, on_delete=models.CASCADE)
     datetime = models.DateTimeField()
-    code = models.ForeignKey(Code, on_delete=models.CASCADE)
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     verion = models.IntegerField(null=True, blank=True)
 
 
-class Bar(models.Model):
-    code = models.ForeignKey(Code, on_delete=models.CASCADE)
+class DailyBar(models.Model):
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     datetime = models.DateTimeField()
     open = models.FloatField(null=True, blank=True)
     high = models.FloatField(null=True, blank=True)
@@ -67,4 +68,4 @@ class Bar(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.code}.{self.datetime}'
+        return f'{self.contract}.{self.datetime}'

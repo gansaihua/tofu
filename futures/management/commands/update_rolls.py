@@ -22,7 +22,7 @@ class Command(BaseCommand):
         ver = kwargs['v'] or DEFALUT_VER
 
         symbol, exchange = kwargs['s'].upper().split('.')
-        root_symbol = models.ContinuousFutures.objects.get(
+        root_symbol = models.RootSymbol.objects.get(
             symbol=symbol,
             exchange__symbol=exchange,
         )
@@ -34,13 +34,13 @@ class Command(BaseCommand):
 
         rolls = roll_finder.get_rolls(root_symbol, start_date)
         for dt, code_id in rolls.iteritems():
-            code = models.Code.objects.get(pk=code_id)
+            contract = models.Contract.objects.get(pk=code_id)
 
-            print(dt, code)
+            print(dt, contract)
 
             models.Roll.objects.update_or_create(
                 verion=ver,
                 root_symbol=root_symbol,
                 datetime=dt,
-                defaults={'code': code}
+                defaults={'contract': contract}
             )
