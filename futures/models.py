@@ -2,10 +2,6 @@ from django.db import models
 
 
 class Exchange(models.Model):
-    # ('大商所', 'DCE')
-    # ('上期所', 'SHF')
-    # ('中金所', 'CFE')
-    # ('郑商所', 'CZC')
     name = models.CharField(max_length=10, null=True, blank=True)
     symbol = models.CharField(max_length=10)
 
@@ -44,14 +40,6 @@ class Contract(models.Model):
 
     def __str__(self):
         return f'{self.symbol}.{self.root_symbol.exchange.symbol}'
-
-
-class Roll(models.Model):
-    root_symbol = models.ForeignKey(
-        RootSymbol, on_delete=models.CASCADE)
-    datetime = models.DateTimeField()
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
-    verion = models.IntegerField(null=True, blank=True)
 
 
 class DailyBar(models.Model):
