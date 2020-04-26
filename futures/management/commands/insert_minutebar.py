@@ -7,17 +7,6 @@ from django.core.management.base import BaseCommand
 from futures import models
 
 
-# In case symbol are repeated used
-# mainly used for CZC
-SYMBOL_USED = {
-    'CZC': [],
-    'SHF': [],
-    'INE': [],
-    'DCE': [],
-    'CFE': [],
-}
-
-
 def _convert_nan(val, default=None):
     if np.isnan(val):
         return default
@@ -25,27 +14,17 @@ def _convert_nan(val, default=None):
 
 
 def _sanitize_symbol(contract):
-    symbol = contract.symbol
+    symbol = contract.symbol_temp or contract.symbol
     exchange = contract.root_symbol.exchange.symbol
 
     if exchange == 'CFE':
         ret = f'CFFEX.{symbol.upper()}'
+    elif exchange == 'CZC':
+        ret = f'CZCE.{symbol.upper()}'
     elif exchange == 'SHF':
         ret = f'SHFE.{symbol.lower()}'
-    elif exchange == 'INE':
-        ret = f'INE.{symbol.lower()}'
-    elif exchange == 'DCE':
-        ret = f'DCE.{symbol.lower()}'
-    elif exchange == 'CZC':
-        m = re.match(r'^(\w{1,2}?)(\d{4})$', symbol)
-
-        if m:
-            s, dt = m.groups()
-        else:
-            raise Exception('Not supported symbol.')
-
-        symbol = s + dt[1:]
-        ret = f'CZCE.{symbol.upper()}'
+    elif exchange in ('INE', 'DCE'):
+        ret = f'{exchange}.{symbol.lower()}'
     else:
         raise Exception('Not supported exchange.')
 
@@ -69,22 +48,17 @@ class Command(BaseCommand):
 
         exchange = kwargs['e'].upper()
 
-        # order by last-traded is necessarily
-        # we always want the latest contract
-        # to use the symbol first, like `ZC101`
         contracts = models.Contract.objects.filter(
             root_symbol__exchange__symbol=exchange
-        ).order_by('-last_traded')
+        )
 
         api = TqApi()
         for contract in contracts:
-            tqsdk_symbol = _sanitize_symbol(contract)
-            if tqsdk_symbol in SYMBOL_USED[exchange]:
-                continue
-            else:
-                SYMBOL_USED[exchange].append(tqsdk_symbol)
-
-            df = api.get_kline_serial(tqsdk_symbol, 60, 8964)
+            df = api.get_kline_serial(
+                _sanitize_symbol(contract),
+                60,
+                8964,
+            )
             df['datetime'] = pd.to_datetime(df['datetime'])
 
             df.sort_values(by=['datetime'], ascending=False, inplace=True)
