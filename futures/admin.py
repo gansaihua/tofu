@@ -33,7 +33,7 @@ class ContractAdmin(admin.ModelAdmin):
 
     list_per_page = 31
     list_display = (
-        'id', exchange, 'name', 'symbol', 'margin',
+        'id', exchange, 'name', 'symbol', 'margin', 'tick_size', 'multiplier',
         'day_limit', 'delivery', 'contract_issued', 'last_traded',
         data,
     )

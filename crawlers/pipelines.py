@@ -27,6 +27,7 @@ class SQLPipeline(object):
                 'name': item['name'],
                 # for temporary use
                 # will rewrite by update_contract command
+                'contract_issued': pd.Timestamp('today').normalize(),
                 'last_traded': pd.Timestamp('2050-1-1'),
             },
         )

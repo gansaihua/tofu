@@ -39,6 +39,9 @@ class Contract(models.Model):
     delivery = models.DateTimeField(null=True, blank=True)
     contract_issued = models.DateTimeField(null=True, blank=True)
     last_traded = models.DateTimeField(null=True, blank=True)
+    tick_size = models.FloatField(null=True, blank=True)
+    multiplier = models.FloatField(null=True, blank=True)
+
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
