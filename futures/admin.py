@@ -3,14 +3,6 @@ from django.utils.html import format_html
 from . import models
 
 
-@admin.register(models.Roll)
-class RollAdmin(admin.ModelAdmin):
-    list_per_page = 31
-    list_display = ('root_symbol', 'datetime', 'contract', 'verion')
-    list_filter = ('verion', 'root_symbol', 'root_symbol__exchange')
-    ordering = ('-datetime',)
-
-
 @admin.register(models.Exchange)
 class ExchangeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'symbol')

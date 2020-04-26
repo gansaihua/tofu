@@ -46,15 +46,24 @@ class Contract(models.Model):
         return f'{self.symbol}.{self.root_symbol.exchange.symbol}'
 
 
-class Roll(models.Model):
-    root_symbol = models.ForeignKey(
-        RootSymbol, on_delete=models.CASCADE)
-    datetime = models.DateTimeField()
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
-    verion = models.IntegerField(null=True, blank=True)
-
-
 class DailyBar(models.Model):
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    datetime = models.DateTimeField()
+    open = models.FloatField(null=True, blank=True)
+    high = models.FloatField(null=True, blank=True)
+    low = models.FloatField(null=True, blank=True)
+    close = models.FloatField(null=True, blank=True)
+    volume = models.IntegerField(null=True, blank=True)
+    open_interest = models.IntegerField(null=True, blank=True)
+
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.contract}.{self.datetime}'
+
+
+class MinuteBar(models.Model):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     datetime = models.DateTimeField()
     open = models.FloatField(null=True, blank=True)
