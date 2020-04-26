@@ -21,6 +21,7 @@ class RootSymbol(models.Model):
     name = models.CharField(max_length=25, null=True, blank=True)
     symbol = models.CharField(max_length=3)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('symbol',)

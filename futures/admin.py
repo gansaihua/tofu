@@ -10,8 +10,8 @@ class ExchangeAdmin(admin.ModelAdmin):
 
 @admin.register(models.RootSymbol)
 class RootSymbolAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'symbol', 'exchange')
-    list_filter = ('exchange',)
+    list_display = ('id', 'name', 'symbol', 'exchange', 'active')
+    list_filter = ('active', 'exchange',)
     # ordering = ('exchange', 'name')
 
 
@@ -33,7 +33,7 @@ class ContractAdmin(admin.ModelAdmin):
 
     list_per_page = 31
     list_display = (
-        'id', exchange, 'name', 'symbol', 'symbol_temp',
+        'id', exchange, 'name', 'symbol',
         'margin', 'tick_size', 'multiplier', 'day_limit', 'delivery',
         'contract_issued', 'last_traded',
         data,
