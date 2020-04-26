@@ -33,11 +33,12 @@ class ContractAdmin(admin.ModelAdmin):
 
     list_per_page = 31
     list_display = (
-        'id', exchange, 'name', 'symbol', 'margin', 'tick_size', 'multiplier',
-        'day_limit', 'delivery', 'contract_issued', 'last_traded',
+        'id', exchange, 'name', 'symbol', 'symbol_temp',
+        'margin', 'tick_size', 'multiplier', 'day_limit', 'delivery',
+        'contract_issued', 'last_traded',
         data,
     )
-    list_filter = ('root_symbol__exchange', 'root_symbol')
+    list_filter = ('active', 'root_symbol__exchange', 'root_symbol')
     search_fields = ('id', 'symbol', 'name')
     ordering = ('root_symbol__exchange', '-symbol')
 

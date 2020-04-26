@@ -32,6 +32,8 @@ class RootSymbol(models.Model):
 class Contract(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     symbol = models.CharField(max_length=10)
+    symbol_temp = models.CharField(  # for CZC use
+        max_length=10, null=True, blank=True)
     root_symbol = models.ForeignKey(
         RootSymbol, on_delete=models.CASCADE)
     margin = models.FloatField(null=True, blank=True)
@@ -41,6 +43,7 @@ class Contract(models.Model):
     last_traded = models.DateTimeField(null=True, blank=True)
     tick_size = models.FloatField(null=True, blank=True)
     multiplier = models.FloatField(null=True, blank=True)
+    active = models.BooleanField(default=True)
 
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
