@@ -5,6 +5,17 @@ from django.core.management.base import BaseCommand
 from futures import models
 
 
+# We write into the intermediary table
+# which will batch insert into the target table `futures_minutebar`
+TABLE_NAME = 'futures_minutebar_changes'
+USED_COLUMNS = ['contract_id', 'datetime', 'open',
+                'high', 'low', 'close', 'volume', 'open_interest']
+ENGINE = create_engine(
+    'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
+    connect_args={'read_default_file': '/share/mysql.cnf'},
+)
+
+
 def _sanitize_symbol(contract):
     symbol = contract.symbol_temp or contract.symbol
     exchange = contract.root_symbol.exchange.symbol
@@ -21,17 +32,6 @@ def _sanitize_symbol(contract):
         raise Exception('Not supported exchange.')
 
     return ret
-
-
-# We write into the intermediary table
-# which will batch insert into the target table `futures_minutebar`
-TABLE_NAME = 'futures_minutebar_changes'
-USED_COLUMNS = ['contract_id', 'datetime', 'open',
-                'high', 'low', 'close', 'volume', 'open_interest']
-ENGINE = create_engine(
-    'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': '/share/mysql.cnf'},
-)
 
 
 class Command(BaseCommand):
@@ -51,7 +51,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write('Insert futures minute bar')
 
-        contracts = models.Contract.objects.all()
+        contracts = models.Contract.objects.filter(
+            root_symbol__active=True
+        )
 
         symbol = kwargs['s']
         root_symbol = kwargs['rs']
