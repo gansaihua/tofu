@@ -1,4 +1,5 @@
 import re
+import pandas as pd
 from . import models
 
 
@@ -22,7 +23,13 @@ class SQLPipeline(object):
         contract, _ = models.Contract.objects.get_or_create(
             root_symbol=root_symbol,
             symbol=item['symbol'],
-            defaults={'name': item['name']},
+            defaults={
+                'name': item['name'],
+                # for temporary use
+                # will rewrite by update_contract command
+                'contract_issued': pd.Timestamp('today').normalize(),
+                'last_traded': pd.Timestamp('2050-1-1'),
+            },
         )
 
         models.DailyBar.objects.update_or_create(
