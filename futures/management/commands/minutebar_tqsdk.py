@@ -30,7 +30,7 @@ USED_COLUMNS = ['contract_id', 'datetime', 'open',
                 'high', 'low', 'close', 'volume', 'open_interest']
 ENGINE = create_engine(
     'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': 'd:/mysql.cnf'},
+    connect_args={'read_default_file': '/share/mysql.cnf'},
 )
 
 
@@ -40,7 +40,7 @@ class Command(BaseCommand):
     with columns (cid, datetime, open, high, low, close, volume, open_interest)
 
     Usage:
-        python manage.py insert_minutebar2
+        python manage.py insert_minutebar
     """
 
     def add_arguments(self, parser):
@@ -59,23 +59,32 @@ class Command(BaseCommand):
         if symbol is not None:
             contracts = contracts.filter(symbol__iexact=symbol)
         elif root_symbol is not None:
-            contracts = contracts.filter(root_symbol__iexact=root_symbol)
+            contracts = contracts.filter(
+                root_symbol__symbol__iexact=root_symbol)
         elif exchange is not None:
             contracts = contracts.filter(
                 root_symbol__exchange__symbol__iexact=exchange
             )
 
+        contracts = contracts.order_by('root_symbol__symbol')
+
         api = TqApi()
         for contract in contracts:
             tq_symbol = _sanitize_symbol(contract)
-            df = api.get_kline_serial(tq_symbol, 60, 8964)
 
-            df.rename(columns={'close_oi': 'open_interest'}, inplace=True)
+            try:
+                df = api.get_kline_serial(tq_symbol, 60, 8964)
+            except:
+                self.stdout.write(f'Cannot find data for {contract}.')
+                continue
+
+            df = df.rename(columns={'close_oi': 'open_interest'})
             df['contract_id'] = contract.id
 
             df[USED_COLUMNS].to_sql(
                 TABLE_NAME, ENGINE, if_exists='append', method='multi', index=False
             )
-            self.stdout.write(f"{contract.id}: {len(df)}rows")
+
+            self.stdout.write(f"{contract}({contract.id}): insert {len(df)} rows")
 
         api.close()

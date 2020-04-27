@@ -62,6 +62,9 @@ class DailyBar(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        get_latest_by = "datetime"
+
     def __str__(self):
         return f'{self.contract}.{self.datetime}'
 
@@ -78,6 +81,7 @@ class MinuteBar(models.Model):
 
     class Meta:
         unique_together = ('contract', 'datetime')
+        get_latest_by = "datetime"
 
     def __str__(self):
         return f'{self.contract}.{self.datetime}'

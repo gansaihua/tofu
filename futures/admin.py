@@ -17,26 +17,36 @@ class RootSymbolAdmin(admin.ModelAdmin):
 
 @admin.register(models.Contract)
 class ContractAdmin(admin.ModelAdmin):
-    def data(self):
+    def exchange(self):
+        return self.root_symbol.exchange
+
+    def dbar(self):
         return format_html(
             f'''
             <a href="/admin/futures/dailybar/?contract_id={self.id}">
-            +
+            +d
             </a>
             '''
         )
 
-    data.allow_tags = True
+    def mbar(self):
+        return format_html(
+            f'''
+            <a href="/admin/futures/minutebar/?contract_id={self.id}">
+            +m
+            </a>
+            '''
+        )
 
-    def exchange(self):
-        return self.root_symbol.exchange
+    dbar.allow_tags = True
+    mbar.allow_tags = True
 
     list_per_page = 31
     list_display = (
         'id', exchange, 'name', 'symbol',
         'margin', 'tick_size', 'multiplier', 'day_limit', 'delivery',
         'contract_issued', 'last_traded',
-        data,
+        dbar, mbar,
     )
     list_filter = ('active', 'root_symbol__exchange', 'root_symbol')
     search_fields = ('id', 'symbol', 'name')
@@ -46,6 +56,16 @@ class ContractAdmin(admin.ModelAdmin):
 @admin.register(models.DailyBar)
 class DailyBarAdmin(admin.ModelAdmin):
     list_per_page = 31
+    list_display = ('contract', 'datetime', 'open', 'high', 'low',
+                    'close', 'volume', 'open_interest')
+    list_filter = ('contract__root_symbol__exchange', 'contract__root_symbol')
+    date_hierarchy = 'datetime'
+    ordering = ('-datetime',)
+
+
+@admin.register(models.MinuteBar)
+class MinuteBarAdmin(admin.ModelAdmin):
+    list_per_page = 60
     list_display = ('contract', 'datetime', 'open', 'high', 'low',
                     'close', 'volume', 'open_interest')
     list_filter = ('contract__root_symbol__exchange', 'contract__root_symbol')

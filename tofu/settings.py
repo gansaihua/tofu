@@ -60,7 +60,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            'read_default_file': 'D:/mysql.cnf',
+            'read_default_file': '/share/mysql.cnf',
         },
     }
 }
@@ -97,7 +97,7 @@ USE_L10N = False
 
 USE_TZ = False
 
-DATETIME_FORMAT = "Y/m/d"
+DATETIME_FORMAT = "Y/m/d H:i"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

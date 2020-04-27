@@ -36,7 +36,7 @@ class Command(BaseCommand):
     with columns (cid, datetime, open, high, low, close, volume, open_interest)
 
     Usage:
-        python manage.py insert_minutebar INE
+        python manage.py insert_minutebar2
     """
 
     def add_arguments(self, parser):
@@ -63,11 +63,7 @@ class Command(BaseCommand):
 
         api = TqApi()
         for contract in contracts:
-            df = api.get_kline_serial(
-                _sanitize_symbol(contract),
-                60,
-                8964,
-            )
+            df = api.get_kline_serial(_sanitize_symbol(contract), 60, 8964)
             df['datetime'] = pd.to_datetime(df['datetime'])
 
             df.sort_values(by=['datetime'], ascending=False, inplace=True)

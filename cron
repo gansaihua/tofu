@@ -1,0 +1,12 @@
+# crawl daily bars from each exchange website
+* 16 * * * /share/dev/tofu/venv/bin/scrapy crawl shf
+* 16 * * * /share/dev/tofu/venv/bin/scrapy crawl ine
+* 16 * * * /share/dev/tofu/venv/bin/scrapy crawl czc
+* 16 * * * /share/dev/tofu/venv/bin/scrapy crawl dce
+* 16 * * * /share/dev/tofu/venv/bin/scrapy crawl cfe
+
+# update symbol_temp for futures_contract every day at 4 pm
+* 16 * * * /share/dev/tofu/venv/bin/python /share/dev/tofu/manage.py generate_symbol_temp
+
+# deactive contracts for futures_contract every day at 4 pm
+* 16 * * * /share/dev/tofu/venv/bin/python /share/dev/tofu/manage.py flag_active
