@@ -1,6 +1,4 @@
 import re
-import numpy as np
-import pandas as pd
 from WindPy import w
 from django.core.management.base import BaseCommand
 
@@ -40,8 +38,11 @@ class Command(BaseCommand):
                 contract.margin = res.Data[0][0]
 
                 m = re.match(r'^(\d+\.?\d*)(\D*)', res.Data[1][0])
+
                 if m is None:
+                    w.close()
                     raise Exception(f'cannot parse tick size for {contract}')
+
                 contract.tick_size = m.group(1)
 
                 contract.multiplier = res.Data[2][0]
@@ -51,3 +52,5 @@ class Command(BaseCommand):
                 contract.save()
 
                 self.stdout.write(f"{contract}, updated")
+
+        w.close()

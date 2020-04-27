@@ -1,5 +1,4 @@
 import re
-from django.db.models import Max
 from django.core.management.base import BaseCommand
 
 from futures import models
@@ -21,7 +20,7 @@ class Command(BaseCommand):
     help = """
     Generate and update temp symbol for contracts traded in CZC exchange
     Usage:
-        python manage.py update_temp_symbol
+        python manage.py generate_symbol_temp
     """
 
     def handle(self, *args, **kwargs):

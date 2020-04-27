@@ -1,4 +1,3 @@
-import re
 import numpy as np
 import pandas as pd
 from tqsdk import TqApi
@@ -90,7 +89,7 @@ class Command(BaseCommand):
                 if created:
                     self.stdout.write(f"{contract.id}({row['datetime']}), created")
                 else:
-                    # since we are looping from latest to oldest days
+                    # since we are looping from latest to oldest bars
                     # if we met the first datetime which exists in the database
                     # break the inserting process
                     break
