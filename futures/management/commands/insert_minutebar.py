@@ -41,16 +41,26 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser):
-        parser.add_argument('e', type=str, help='exchange name')
+        parser.add_argument('--e', type=str, help='exchange name')
+        parser.add_argument('--s', type=str, help='contract symbol')
+        parser.add_argument('--rs', type=str, help='root symbol')
 
     def handle(self, *args, **kwargs):
         self.stdout.write('Insert futures minute bar')
 
-        exchange = kwargs['e'].upper()
+        contracts = models.Contract.objects.all()
 
-        contracts = models.Contract.objects.filter(
-            root_symbol__exchange__symbol=exchange
-        )
+        symbol = kwargs['s']
+        root_symbol = kwargs['rs']
+        exchange = kwargs['e']
+        if symbol is not None:
+            contracts = contracts.filter(symbol__iexact=symbol)
+        elif root_symbol is not None:
+            contracts = contracts.filter(root_symbol__iexact=root_symbol)
+        elif exchange is not None:
+            contracts = contracts.filter(
+                root_symbol__exchange__symbol__iexact=exchange
+            )
 
         api = TqApi()
         for contract in contracts:
