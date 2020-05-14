@@ -63,6 +63,8 @@ class DailyBar(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
+        unique_together = ('contract', 'datetime')
+        indexes = [models.Index(fields=['datetime'], name='daybar_dt_idx')]
         get_latest_by = "datetime"
 
     def __str__(self):
@@ -81,6 +83,7 @@ class MinuteBar(models.Model):
 
     class Meta:
         unique_together = ('contract', 'datetime')
+        indexes = [models.Index(fields=['datetime'], name='minbar_dt_idx')]
         get_latest_by = "datetime"
 
     def __str__(self):
