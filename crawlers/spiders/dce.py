@@ -10,7 +10,7 @@ from scrapy.loader import ItemLoader
 from ..items import BarItem
 
 
-DEFAULT_MIN_DATE = pd.Timestamp('2006-01-04')
+DEFAULT_MIN_DATE = pd.Timestamp('2004-12-22')
 ALLOWED_PRODUCTS = {
     '豆一': 'A',
     '豆二': 'B',
