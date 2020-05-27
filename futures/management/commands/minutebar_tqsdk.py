@@ -40,7 +40,7 @@ class Command(BaseCommand):
     with columns (cid, datetime, open, high, low, close, volume, open_interest)
 
     Usage:
-        python manage.py insert_minutebar
+        python manage.py minutebar_tqsdk
     """
 
     def add_arguments(self, parser):
@@ -51,9 +51,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write('Insert futures minute bar')
 
-        contracts = models.Contract.objects.filter(
-            root_symbol__active=True
-        )
+        contracts = models.Contract.objects.filter(active=True)
 
         symbol = kwargs['s']
         root_symbol = kwargs['rs']
