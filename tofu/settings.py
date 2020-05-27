@@ -3,7 +3,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '&u37^d67$%fx6q9)&7&3z6g#4bhh#wnw30^oof5vpf%b=_^yj^'
 
@@ -11,7 +10,6 @@ SECRET_KEY = '&u37^d67$%fx6q9)&7&3z6g#4bhh#wnw30^oof5vpf%b=_^yj^'
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -55,7 +53,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'tofu.wsgi.application'
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -82,7 +79,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
