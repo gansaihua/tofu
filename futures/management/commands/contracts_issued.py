@@ -27,11 +27,16 @@ class Command(BaseCommand):
 
         file_name = _DEF_FOLDER + (kwargs['f'] or _DEF_FILE)
         df = pd.read_excel(file_name,
-                           index_col=0,
                            parse_dates=['contract_issued'])
 
-        for code_id, row in df.iterrows():
-            contract = models.Contract.objects.get(pk=code_id)
+        for _, row in df.iterrows():
+            if np.isnan(row['id']):
+                contract = models.Contract.objects.get(
+                    symbol=row['symbol'],
+                    root_symbol__exchange__symbol=row['exchange'])
+            else:
+                contract = models.Contract.objects.get(pk=row['id'])
+
             contract.contract_issued = row['contract_issued']
             contract.save()
             self.stdout.write(f"{contract}, updated")
