@@ -10,9 +10,27 @@ class ExchangeAdmin(admin.ModelAdmin):
 
 @admin.register(models.RootSymbol)
 class RootSymbolAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'symbol', 'exchange', 'active')
-    list_filter = ('active', 'exchange',)
+    def cf_chain(self):
+        return format_html(
+            f'''
+            <a href="/admin/futures/continuousfutures/?root_symbol__id={self.id}">
+            ~
+            </a>
+            '''
+        )
+    cf_chain.allow_tags = True
+
+    list_display = ('id', 'name', 'symbol', 'exchange',
+                    'launched', 'active', cf_chain)
+    list_filter = ('active', 'exchange')
     # ordering = ('exchange', 'name')
+
+
+@admin.register(models.ContinuousFutures)
+class ContinuousFuturesAdmin(admin.ModelAdmin):
+    list_display = ('id', 'root_symbol', 'contract', 'datetime', 'version')
+    list_filter = ('root_symbol',)
+    date_hierarchy = 'datetime'
 
 
 @admin.register(models.Contract)

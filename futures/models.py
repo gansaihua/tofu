@@ -18,6 +18,7 @@ class RootSymbol(models.Model):
     symbol = models.CharField(max_length=3)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
+    launched = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('symbol',)
@@ -47,6 +48,18 @@ class Contract(models.Model):
 
     def __str__(self):
         return f'{self.symbol}.{self.root_symbol.exchange.symbol}'
+
+
+class ContinuousFutures(models.Model):
+    root_symbol = models.ForeignKey(
+        RootSymbol, on_delete=models.CASCADE)
+    datetime = models.DateTimeField()
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    version = models.IntegerField()
+
+    class Meta:
+        ordering = ('datetime',)
+        get_latest_by = "datetime"
 
 
 class DailyBar(models.Model):
