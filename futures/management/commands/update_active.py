@@ -1,6 +1,4 @@
 import pandas as pd
-
-from django.db.models import Max
 from django.core.management.base import BaseCommand
 
 from futures import models
