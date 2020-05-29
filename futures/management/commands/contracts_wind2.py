@@ -7,13 +7,6 @@ from django.core.management.base import BaseCommand
 
 _DEF_FOLDER = 'futures/management/fixtures/'
 _DEF_FILE = 'contracts.xlsx'
-_DEF_MIN_DATES = {
-    'DCE': pd.Timestamp('2006-01-04'),
-    'CFE': pd.Timestamp('2010-04-16'),
-    'INE': pd.Timestamp('2018-03-26'),
-    'SHF': pd.Timestamp('2002-12-02'),
-    'CZC': pd.Timestamp('2005-05-09'),
-}
 
 
 def _sanitize_code(raw_code, dt):
@@ -74,10 +67,7 @@ class Command(BaseCommand):
             if np.isnan(day_limit):
                 day_limit = None
 
-            # Skip contracts issued too much early
             last_traded = row['最后交易日']
-            if last_traded < _DEF_MIN_DATES[exchange]:
-                continue
 
             delivery = row['最后交割日']
             contract_issued = row['合约上市日']

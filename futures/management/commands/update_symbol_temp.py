@@ -23,8 +23,14 @@ class Command(BaseCommand):
         python manage.py generate_symbol_temp
     """
 
+    def add_arguments(self, parser):
+        parser.add_argument('--rs', type=str, help='root symbol')
+
     def handle(self, *args, **kwargs):
         rs = models.RootSymbol.objects.filter(exchange__symbol='CZC')
+
+        if kwargs['rs']:
+            rs = rs.filter(symbol=kwargs['rs'])
 
         for root_symbol in rs:
             contracts = models.Contract.objects.filter(
