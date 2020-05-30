@@ -14,11 +14,24 @@ class Exchange(models.Model):
 
 
 class RootSymbol(models.Model):
+    COMMISSION_TYPE = [
+        ('f', 'Fixed'),
+        ('p', 'Percent'),
+    ]
+
     name = models.CharField(max_length=25, null=True, blank=True)
     symbol = models.CharField(max_length=3)
     exchange = models.ForeignKey(Exchange, on_delete=models.CASCADE)
-    active = models.BooleanField(default=True)
+
     launched = models.DateTimeField(null=True, blank=True)
+    margin = models.FloatField(null=True, blank=True)
+    tick_size = models.FloatField(null=True, blank=True)
+    multiplier = models.FloatField(null=True, blank=True)
+    commission = models.FloatField(null=True, blank=True)
+    commission_type = models.CharField(
+        max_length=1, choices=COMMISSION_TYPE, default='f')
+
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ('symbol',)

@@ -14,14 +14,16 @@ class RootSymbolAdmin(admin.ModelAdmin):
         return format_html(
             f'''
             <a href="/admin/futures/continuousfutures/?root_symbol__id={self.id}">
-            ~
+            +
             </a>
             '''
         )
     cf_chain.allow_tags = True
 
     list_display = ('id', 'name', 'symbol', 'exchange',
-                    'launched', 'active', cf_chain)
+                    'launched',  'tick_size', 'margin',
+                    'multiplier', 'commission', 'commission_type',
+                    'active', cf_chain)
     list_filter = ('active', 'exchange')
     # ordering = ('exchange', 'name')
 
