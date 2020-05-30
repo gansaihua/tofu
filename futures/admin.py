@@ -26,8 +26,8 @@ class RootSymbolAdmin(admin.ModelAdmin):
     # ordering = ('exchange', 'name')
 
 
-@admin.register(models.ContinuousFutures)
-class ContinuousFuturesAdmin(admin.ModelAdmin):
+@admin.register(models.Chain)
+class ChainAdmin(admin.ModelAdmin):
     list_display = ('id', 'root_symbol', 'contract', 'datetime', 'version')
     list_filter = ('root_symbol',)
     date_hierarchy = 'datetime'

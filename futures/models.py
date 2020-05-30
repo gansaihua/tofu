@@ -50,7 +50,7 @@ class Contract(models.Model):
         return f'{self.symbol}.{self.root_symbol.exchange.symbol}'
 
 
-class ContinuousFutures(models.Model):
+class Chain(models.Model):
     root_symbol = models.ForeignKey(
         RootSymbol, on_delete=models.CASCADE)
     datetime = models.DateTimeField()
