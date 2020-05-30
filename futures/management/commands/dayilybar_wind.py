@@ -14,8 +14,8 @@ def _sanitize_symbol(contract):
 
 
 # We write into the intermediary table
-# which will batch insert into the target table `futures_minutebar`
-TABLE_NAME = 'futures_minutebar_changes'
+# which will batch insert into the target table
+TABLE_NAME = 'futures_dailybar_changes'
 
 OHLC = ['open', 'high', 'low', 'close', 'volume']
 V = ['volume']
@@ -30,15 +30,9 @@ ENGINE = create_engine(
 
 class Command(BaseCommand):
     help = """
-    Import minute bar data of futures from tqsdk to database.
-    with columns (cid, datetime, open, high, low, close, volume, open_interest)
-
-    We use tqsdk for ongoing data updating, and Wind to fill the missing historical bars.
-    Here we set the default t1(start) is contract_issued
-    and t2(end) is the earliest bar datetime.
 
     Usage:
-        python manage.py wind_minutebar
+        python manage.py dailybar_wind
     """
 
     def add_arguments(self, parser):
@@ -57,16 +51,16 @@ class Command(BaseCommand):
                 continue
 
             try:
-                bar = models.MinuteBar.objects.filter(contract=contract)
+                bar = models.DailyBar.objects.filter(contract=contract)
                 default_end = bar.earliest().datetime
-            except models.MinuteBar.DoesNotExist:
+            except models.DailyBar.DoesNotExist:
                 default_end = contract.last_traded
 
             t1 = kwargs['t1'] or contract.contract_issued
             t2 = kwargs['t2'] or default_end
 
             fields = ['open', 'high', 'low', 'close', 'volume', 'oi']
-            status, df = w.wsi(_sanitize_symbol(contract),
+            status, df = w.wsd(_sanitize_symbol(contract),
                                ','.join(fields),
                                pd.Timestamp(t1),
                                pd.Timestamp(t2),
@@ -78,13 +72,12 @@ class Command(BaseCommand):
                 continue
 
             df.rename(columns=str.lower, inplace=True)
-            df.rename(columns={'position': 'open_interest'}, inplace=True)
+            df.rename(columns={'oi': 'open_interest'}, inplace=True)
 
             df[OHLC] = df[OHLC].fillna(method='ffill')
             df[V] = df[V].fillna(0)
 
-            df.dropna(subset=['open', 'high', 'low', 'close'],
-                      how='all',
+            df.dropna(subset=OHLC, how='all',
                       inplace=True)
 
             df.index = pd.to_datetime(df.index)
@@ -93,7 +86,8 @@ class Command(BaseCommand):
 
             df['contract_id'] = contract.id
 
-            df[COLUMNS].to_sql(TABLE_NAME, ENGINE,
+            df[COLUMNS].to_sql(TABLE_NAME,
+                               ENGINE,
                                if_exists='append',
                                index=False,
                                method='multi')

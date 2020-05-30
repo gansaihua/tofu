@@ -13,7 +13,7 @@ class RootSymbolAdmin(admin.ModelAdmin):
     def cf_chain(self):
         return format_html(
             f'''
-            <a href="/admin/futures/continuousfutures/?root_symbol__id={self.id}">
+            <a href="/admin/futures/chain/?root_symbol__id={self.id}">
             +
             </a>
             '''
@@ -25,6 +25,7 @@ class RootSymbolAdmin(admin.ModelAdmin):
                     'multiplier', 'commission', 'commission_type',
                     'active', cf_chain)
     list_filter = ('active', 'exchange')
+    search_fields = ('id', 'symbol', 'name')
     # ordering = ('exchange', 'name')
 
 

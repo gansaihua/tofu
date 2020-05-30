@@ -84,9 +84,6 @@ class DailyBar(models.Model):
     volume = models.IntegerField(null=True, blank=True)
     open_interest = models.IntegerField(null=True, blank=True)
 
-    date_added = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(auto_now=True)
-
     class Meta:
         unique_together = ('contract', 'datetime')
         indexes = [models.Index(fields=['datetime'], name='daybar_dt_idx')]
@@ -94,6 +91,22 @@ class DailyBar(models.Model):
 
     def __str__(self):
         return f'{self.contract}.{self.datetime}'
+
+
+class DailyBarChange(models.Model):
+    """Intermediate process for batch insert into DailyBar model
+    """
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    datetime = models.BigIntegerField()  # nano-seconds
+    open = models.FloatField(null=True, blank=True)
+    high = models.FloatField(null=True, blank=True)
+    low = models.FloatField(null=True, blank=True)
+    close = models.FloatField(null=True, blank=True)
+    volume = models.IntegerField(null=True, blank=True)
+    open_interest = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'futures_dailybar_changes'
 
 
 class MinuteBar(models.Model):
