@@ -15,8 +15,8 @@ class Exchange(models.Model):
 
 class RootSymbol(models.Model):
     COMMISSION_TYPE = [
-        ('f', 'Fixed'),
-        ('p', 'Percent'),
+        (0, 'Percent'),
+        (1, 'Fixed'),
     ]
 
     name = models.CharField(max_length=25, null=True, blank=True)
@@ -28,8 +28,7 @@ class RootSymbol(models.Model):
     tick_size = models.FloatField(null=True, blank=True)
     multiplier = models.FloatField(null=True, blank=True)
     commission = models.FloatField(null=True, blank=True)
-    commission_type = models.CharField(
-        max_length=1, choices=COMMISSION_TYPE, default='f')
+    commission_type = models.IntegerField(choices=COMMISSION_TYPE, default=0)
 
     active = models.BooleanField(default=True)
 
