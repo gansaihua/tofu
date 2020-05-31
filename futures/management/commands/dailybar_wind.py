@@ -14,7 +14,8 @@ def _sanitize_symbol(contract):
 
 
 # We write into the intermediary table
-# which will batch insert into the target table
+# which will be batch inserted into the target table
+# will ignore existed bar rather update it
 TABLE_NAME = 'futures_dailybar_changes'
 
 OHLC = ['open', 'high', 'low', 'close', 'volume']
@@ -30,9 +31,8 @@ ENGINE = create_engine(
 
 class Command(BaseCommand):
     help = """
-
-    Usage:
-        python manage.py dailybar_wind
+    fill the previous contracts' pricing data
+    Usage: python manage.py dailybar_wind IF
     """
 
     def add_arguments(self, parser):
@@ -44,12 +44,13 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         w.start()
 
-        contracts = models.Contract.objects.filter(
-            root_symbol__symbol=kwargs['rs']).order_by('-last_traded')
-        for contract in contracts:
-            if kwargs['s'] and contract.symbol != kwargs['s']:
-                continue
+        if kwargs['s']:
+            contracts = models.Contract.objects.filter(symbol=kwargs['s'])
+        else:
+            contracts = models.Contract.objects.filter(
+                root_symbol__symbol=kwargs['rs']).order_by('-last_traded')
 
+        for contract in contracts:
             try:
                 bar = models.DailyBar.objects.filter(contract=contract)
                 default_end = bar.earliest().datetime
