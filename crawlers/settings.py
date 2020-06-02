@@ -9,5 +9,6 @@ ROBOTSTXT_OBEY = False
 
 LOG_LEVEL = 'WARNING'
 ITEM_PIPELINES = {
-    'crawlers.pipelines.SQLPipeline': 300,
+    'crawlers.pipelines.FuturesPipeline': 300,
+    'crawlers.pipelines.StockPipeline': 301,
 }

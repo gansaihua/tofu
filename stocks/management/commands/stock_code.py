@@ -30,15 +30,23 @@ class Command(BaseCommand):
 
         df = pd.read_excel(file_name, parse_dates=['start_date', 'end_date'])
         for _, row in df.iterrows():
+            symbol = sanitize_symbol(row['symbol'], row['asset'])
+            try:
+                exchange = models.Exchange.objects.get(symbol=row['exchange'])
+            except models.Exchange.DoesNotExist:
+                exchange = None
+
+            end_date = row['end_date']
+            if pd.isna(end_date):
+                end_date = None
+
             code, created = models.Code.objects.update_or_create(
-                symbol=sanitize_symbol(row['symbol'], row['asset']),
-                exchange=models.Exchange.objects.get(symbol=row['exchange']),
-                defaults={
-                    'name': row['name'],
-                    'asset': row['asset'],
-                    'start_date': row['start_date'],
-                    'end_date': None if pd.isna(row['end_date']) else row['end_date'],
-                }
+                symbol=symbol,
+                exchange=exchange,
+                defaults={'name': row['name'],
+                          'asset': row['asset'],
+                          'start_date': row['start_date'],
+                          'end_date': end_date}
             )
             if created:
                 self.stdout.write(f"{code}, created")

@@ -38,7 +38,8 @@ class BarItem(scrapy.Item):
         output_processor=TakeFirst(),
     )
     datetime = scrapy.Field(
-        input_processor=MapCompose(remove_tags, str.strip, _convert_to_date),
+        input_processor=MapCompose(
+            str, remove_tags, str.strip, _convert_to_date),
         output_processor=TakeFirst(),
     )
     open = scrapy.Field(
@@ -64,6 +65,11 @@ class BarItem(scrapy.Item):
     volume = scrapy.Field(
         input_processor=MapCompose(
             str, remove_tags, str.strip, _remove_nan, _convert_to_int),
+        output_processor=TakeFirst(),
+    )
+    amount = scrapy.Field(
+        input_processor=MapCompose(
+            str, remove_tags, str.strip, _remove_nan),
         output_processor=TakeFirst(),
     )
     open_interest = scrapy.Field(

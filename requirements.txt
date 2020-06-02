@@ -10,7 +10,7 @@ chardet==3.0.4
 constantly==15.1.0
 cryptography==2.9.2
 cssselect==1.1.0
-Django==3.0.5
+Django==3.0.6
 html5lib==1.0.1
 hyperlink==19.0.0
 idna==2.9
@@ -18,8 +18,8 @@ incremental==17.5.0
 lxml==4.5.0
 multidict==4.7.5
 mysqlclient==1.4.6
-numpy==1.18.3
-pandas==1.0.3
+numpy==1.18.4
+pandas==1.0.4
 parsel==1.5.2
 Protego==0.1.16
 pyasn1==0.4.8
@@ -35,13 +35,14 @@ queuelib==1.5.0
 requests==2.23.0
 scipy==1.4.1
 Scrapy==2.1.0
+scrapy-splash==0.7.2
 service-identity==18.1.0
 simplejson==3.17.0
 six==1.14.0
 soupsieve==2.0
 SQLAlchemy==1.3.16
 sqlparse==0.3.1
-tqsdk==1.7.0
+tqsdk==1.8.0
 Twisted==20.3.0
 urllib3==1.25.9
 w3lib==1.21.0

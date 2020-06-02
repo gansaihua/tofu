@@ -1,3 +1,4 @@
+import os
 from tqsdk import TqApi
 from sqlalchemy import create_engine
 from django.core.management.base import BaseCommand
@@ -12,7 +13,7 @@ USED_COLUMNS = ['contract_id', 'datetime', 'open',
                 'high', 'low', 'close', 'volume', 'open_interest']
 ENGINE = create_engine(
     'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': '/share/mysql.cnf'},
+    connect_args={'read_default_file': os.path.expanduser('~/my.cnf')},
 )
 
 
