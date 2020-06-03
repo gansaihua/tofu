@@ -5,7 +5,6 @@ scrapy crawl sse -a s=000001 -a n=3 # download 3 bars
 """
 
 import json
-import pandas as pd
 import scrapy
 from scrapy.loader import ItemLoader
 from .. import models

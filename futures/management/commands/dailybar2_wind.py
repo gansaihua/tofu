@@ -1,8 +1,6 @@
-import os
 import numpy as np
 import pandas as pd
 from WindPy import w
-from sqlalchemy import create_engine
 from django.core.management.base import BaseCommand
 
 from futures import models
@@ -18,12 +16,6 @@ def _convert_nan(val, default=None):
     if np.isnan(val):
         return default
     return val
-
-
-ENGINE = create_engine(
-    'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': os.path.expanduser('~/my.cnf')},
-)
 
 
 class Command(BaseCommand):

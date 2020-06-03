@@ -8,7 +8,7 @@ class FuturesPipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         # check compatible spiders
-        if crawler.spider.name in ('cfe', 'czc', 'dce', 'ine', 'shf'):
+        if getattr(crawler.spider, 'name', None) in ('cfe', 'czc', 'dce', 'ine', 'shf'):
             return cls()
 
     def open_spider(self, spider):
@@ -63,7 +63,7 @@ class StockPipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         # check compatible spiders
-        if crawler.spider.name in ('sse', 'szse'):
+        if getattr(crawler.spider, 'name', None) in ('sse', 'szse', 'swindex'):
             return cls()
 
     def open_spider(self, spider):

@@ -1,7 +1,6 @@
-import os
 import pandas as pd
 from WindPy import w
-from sqlalchemy import create_engine
+from aldjemy.core import get_engine
 from django.core.management.base import BaseCommand
 
 from futures import models
@@ -17,15 +16,10 @@ def _sanitize_symbol(contract):
 # which will batch insert into the target table `futures_minutebar`
 TABLE_NAME = 'futures_minutebar_changes'
 
-OHLC = ['open', 'high', 'low', 'close', 'volume']
+OHLC = ['open', 'high', 'low', 'close']
 V = ['volume']
 OI = ['open_interest']
 COLUMNS = OHLC + V + OI + ['contract_id', 'datetime']
-
-ENGINE = create_engine(
-    'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': os.path.expanduser('~/my.cnf')},
-)
 
 
 class Command(BaseCommand):
@@ -93,7 +87,8 @@ class Command(BaseCommand):
 
             df['contract_id'] = contract.id
 
-            df[COLUMNS].to_sql(TABLE_NAME, ENGINE,
+            df[COLUMNS].to_sql(TABLE_NAME,
+                               get_engine(),
                                if_exists='append',
                                index=False,
                                method='multi')

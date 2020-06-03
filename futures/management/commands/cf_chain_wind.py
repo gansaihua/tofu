@@ -1,17 +1,8 @@
-import os
 import re
-import datetime
-import pandas as pd
 from WindPy import w
-from sqlalchemy import create_engine
 from django.core.management.base import BaseCommand
 
 from futures import models
-
-ENGINE = create_engine(
-    'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': os.path.expanduser('~/my.cnf')},
-)
 
 
 def _f(wind_ticker, root_symbol):
@@ -47,10 +38,10 @@ class Command(BaseCommand):
 
         for rs in rss:
             try:
-                row = models.ContinuousFutures.objects.filter(
+                row = models.Chain.objects.filter(
                     root_symbol=rs)
                 default_start = row.latest().datetime
-            except models.ContinuousFutures.DoesNotExist:
+            except models.Chain.DoesNotExist:
                 default_start = rs.launched
 
             ticker = rs.symbol + '.' + rs.exchange.symbol
@@ -76,7 +67,7 @@ class Command(BaseCommand):
             df['contract'] = df['contract'].apply(lambda x: _f(x, rs))
 
             for dt, row in df.iterrows():
-                cf, created = models.ContinuousFutures.objects.update_or_create(
+                cf, created = models.Chain.objects.update_or_create(
                     root_symbol=rs,
                     datetime=dt,
                     contract=row['contract'],

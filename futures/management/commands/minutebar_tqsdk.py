@@ -1,6 +1,5 @@
-import os
 from tqsdk import TqApi
-from sqlalchemy import create_engine
+from aldjemy.core import get_engine
 from django.core.management.base import BaseCommand
 
 from futures import models
@@ -11,10 +10,6 @@ from futures import models
 TABLE_NAME = 'futures_minutebar_changes'
 USED_COLUMNS = ['contract_id', 'datetime', 'open',
                 'high', 'low', 'close', 'volume', 'open_interest']
-ENGINE = create_engine(
-    'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': os.path.expanduser('~/my.cnf')},
-)
 
 
 def _sanitize_symbol(contract):
@@ -83,7 +78,11 @@ class Command(BaseCommand):
             df['contract_id'] = contract.id
 
             df[USED_COLUMNS].to_sql(
-                TABLE_NAME, ENGINE, if_exists='append', method='multi', index=False
+                TABLE_NAME,
+                get_engine(),
+                if_exists='append',
+                method='multi',
+                index=False
             )
 
             self.stdout.write(f"{contract}({contract.id}): insert {len(df)} rows")

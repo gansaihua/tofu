@@ -1,6 +1,5 @@
-import os
 import pandas as pd
-from sqlalchemy import create_engine
+from aldjemy.core import get_engine
 from django.core.management.base import BaseCommand
 
 from futures import models
@@ -11,10 +10,6 @@ from futures import models
 TABLE_NAME = 'futures_minutebar_changes'
 USED_COLUMNS = ['contract_id', 'datetime', 'open',
                 'high', 'low', 'close', 'volume', 'open_interest']
-ENGINE = create_engine(
-    'mysql+pymysql://rm-2zedo2m914a92z7rhfo.mysql.rds.aliyuncs.com',
-    connect_args={'read_default_file': os.path.expanduser('~/my.cnf')},
-)
 _DEF_FOLDER = 'futures/management/fixtures/'
 
 
@@ -59,6 +54,10 @@ class Command(BaseCommand):
             USED_COLUMNS.remove('open_interest')
 
         df[USED_COLUMNS].to_sql(
-            TABLE_NAME, ENGINE, if_exists='append', index=False, method='multi'
+            TABLE_NAME,
+            get_engine(),
+            if_exists='append',
+            index=False,
+            method='multi',
         )
         self.stdout.write(f"{contract}: insert {len(df)} rows")

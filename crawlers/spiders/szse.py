@@ -1,10 +1,10 @@
 """
 scrapy crawl szse
 scrapy crawl szse -a s=000001
+scrapy crawl szse -a s=000001 -a n=100
 """
 
 import json
-import pandas as pd
 import scrapy
 from scrapy.loader import ItemLoader
 from .. import models
@@ -16,6 +16,7 @@ class SZSESpider(scrapy.Spider):
     exchange = 'SZSE'
 
     def start_requests(self):
+        self.n_bar = getattr(self, 'n', 1)
         symbols = getattr(self, 'symbol', None)
 
         url_fmt = 'http://www.szse.cn/api/market/ssjjhq/getHistoryData?cycleType=32&marketId=1&code={}'
@@ -31,7 +32,11 @@ class SZSESpider(scrapy.Spider):
     def parse(self, response):
         js = json.loads(response.text)['data']
 
-        for item in js['picupdata']:
+        n = len(js['picupdata'])
+        for i, item in enumerate(js['picupdata']):
+            if i < max(0, n - self.n_bar):  # skip the first n bars
+                continue
+
             l = ItemLoader(item=BarItem(), selector=item)
 
             l.add_value('symbol', js['code'])

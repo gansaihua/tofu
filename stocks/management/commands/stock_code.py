@@ -46,9 +46,10 @@ class Command(BaseCommand):
                 defaults={'name': row['name'],
                           'asset': row['asset'],
                           'start_date': row['start_date'],
-                          'end_date': end_date}
-            )
+                          'end_date': end_date,
+                          'wind_code': row['wind_code'],
+                          'market': row['market']})
             if created:
                 self.stdout.write(f"{code}, created")
             else:
-                self.stdout.write(f"{code}, udpated")
+                self.stdout.write(f"{code}, updated")
