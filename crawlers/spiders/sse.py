@@ -16,7 +16,7 @@ class SSESpider(scrapy.Spider):
     exchange = 'SSE'
 
     def start_requests(self):
-        n_bar = getattr(self, 'n', '1')
+        n_bar = getattr(self, 'n', 2)
         symbols = getattr(self, 'symbol', None)
 
         n_begin = str(-int(n_bar) - 1)

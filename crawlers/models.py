@@ -15,5 +15,5 @@ os.environ.setdefault(
 django.setup()
 
 from django.db import connection
-from futures.models import Exchange, Contract, DailyBar as FuturesDayBar
+from futures.models import Exchange, RootSymbol, Contract, DailyBar as FuturesDayBar
 from stocks.models import Code, DayBar as StockDayBar

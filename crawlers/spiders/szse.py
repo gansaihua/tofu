@@ -16,7 +16,7 @@ class SZSESpider(scrapy.Spider):
     exchange = 'SZSE'
 
     def start_requests(self):
-        self.n_bar = getattr(self, 'n', 1)
+        self.n_bar = getattr(self, 'n', 2)
         symbols = getattr(self, 'symbol', None)
 
         url_fmt = 'http://www.szse.cn/api/market/ssjjhq/getHistoryData?cycleType=32&marketId=1&code={}'
@@ -32,8 +32,12 @@ class SZSESpider(scrapy.Spider):
     def parse(self, response):
         js = json.loads(response.text)['data']
 
-        n = len(js['picupdata'])
-        for i, item in enumerate(js['picupdata']):
+        data = js['picupdata']
+        if data is None:
+            return
+
+        n = len(data)
+        for i, item in enumerate(data):
             if i < max(0, n - self.n_bar):  # skip the first n bars
                 continue
 

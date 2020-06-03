@@ -8,6 +8,9 @@ scrapy crawl ine
 scrapy crawl czc
 scrapy crawl dce
 scrapy crawl cfe
+scrapy crawl sse
+scrapy crawl szse
+scrapy crawl swindex -a t1=today
 
 # update symbol_temp for CZC exchange
 ./manage.py update_symbol_temp
