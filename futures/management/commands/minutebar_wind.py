@@ -44,12 +44,13 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         w.start()
 
-        contracts = models.Contract.objects.filter(
-            root_symbol__symbol=kwargs['rs']).order_by('-last_traded')
-        for contract in contracts:
-            if kwargs['s'] and contract.symbol != kwargs['s']:
-                continue
+        if kwargs['s']:
+            contracts = models.Contract.objects.filter(symbol=kwargs['s'])
+        else:
+            contracts = models.Contract.objects.filter(
+                root_symbol__symbol=kwargs['rs']).order_by('-last_traded')
 
+        for contract in contracts:
             try:
                 bar = models.MinuteBar.objects.filter(contract=contract)
                 default_end = bar.earliest().datetime
