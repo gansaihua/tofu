@@ -15,11 +15,7 @@ scrapy crawl swindex -a t1=today
 # update symbol_temp for CZC exchange
 ./manage.py update_symbol_temp
 
-./manage.py minutebar_tqsdk --e=shf
-./manage.py minutebar_tqsdk --e=ine
-./manage.py minutebar_tqsdk --e=czc
-./manage.py minutebar_tqsdk --e=dce
-./manage.py minutebar_tqsdk --e=cfe
+./manage.py minutebar_tqsdk
 
 # update whether contract is active
 ./manage.py update_active
