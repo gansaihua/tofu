@@ -16,12 +16,13 @@ class SZSESpider(scrapy.Spider):
     exchange = 'SZSE'
 
     def start_requests(self):
-        self.n_bar = getattr(self, 'n', 2)
+        self.n_bar = int(getattr(self, 'n', 2))
         symbols = getattr(self, 'symbol', None)
 
         url_fmt = 'http://www.szse.cn/api/market/ssjjhq/getHistoryData?cycleType=32&marketId=1&code={}'
         if symbols is None:
             symbols = models.Code.objects.filter(
+                active=True,
                 exchange__symbol=self.exchange)
             for s in symbols:
                 print(s)

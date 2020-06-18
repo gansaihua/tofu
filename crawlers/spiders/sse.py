@@ -24,6 +24,7 @@ class SSESpider(scrapy.Spider):
         url_fmt = 'http://yunhq.sse.com.cn:32041//v1/sh1/dayk/{}?begin={}'
         if symbols is None:
             symbols = models.Code.objects.filter(
+                active=True,
                 exchange__symbol=self.exchange)
             for s in symbols:
                 print(s)
